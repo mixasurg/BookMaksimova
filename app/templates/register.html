@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+    <h1>Регистрация</h1>
+    <form method="POST" action="/register">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="full_name">ФИО:</label>
+        <input type="text" id="full_name" name="full_name" required><br><br>
+
+        <label for="contact_info">Контактные данные:</label>
+        <input type="text" id="contact_info" name="contact_info" required><br><br>
+
+        <label for="is_artist">Зарегистрироваться как мастер:</label>
+        <input type="checkbox" id="is_artist" name="is_artist"><br><br>
+
+        <input type="submit" value="Зарегистрироваться">
+    </form>
+</body>
+</html>

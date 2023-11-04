@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Добавить товар</title>
+  <script>
+    function addPhotoInput() {
+      var container = document.getElementById("photo-container");
+      var input = document.createElement("input");
+      input.type = "file";
+      input.name = "photos[]";
+      container.appendChild(input);
+    }
+  </script>
+</head>
+<body>
+  <h1>Добавить товар</h1>
+  <form action="/add_product" method="post" enctype="multipart/form-data">
+    <label for="name">Название</label>
+    <input type="text" name="name" id="name">
+    
+    <label for="kategory">Категория</label>
+    <select name="kategory" id="kategory">
+      {% for kategory in kategory %}
+      <option value="{{ kategory.id }}">{{ kategory.kategory }}</option>
+      {% endfor %}  
+    </select>
+    
+    <label for="material">Материал</label>
+    <select name="material" id="material">
+      {% for material in materials %}
+      <option value="{{ material.id }}">{{ material.material }}</option>
+      {% endfor %}  
+    </select>
+    
+    <label for="photos">Выберите фотографии:</label><br>
+    <div id="photo-container">
+      <input type="file" name="photos[]" required><br><br>
+    </div>
+    <button type="button" onclick="addPhotoInput()">Добавить фотографию</button><br><br>
+    
+    <input type="submit" value="Добавить миниатюру">
+  </form>
+</body>
+</html>
