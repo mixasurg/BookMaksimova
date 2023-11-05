@@ -44,8 +44,8 @@ class User(UserMixin, db.Model):
 class Order(db.Model):
     __tablename__ = 'Orders'
     order_ID = db.Column(db.Integer, primary_key=True)
-    customer_ID = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-    status_id = db.Column(db.Integer, db.ForeignKey('status.status_ID'))
+    customer_ID = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('Status.status_id'))
     order_date = db.Column(db.Date)
     completion_date = db.Column(db.Date)
     description = db.Column(db.Text)
@@ -53,14 +53,15 @@ class Order(db.Model):
 # Модель Строки заказов
 class OrderLine(db.Model):
     __tablename__ = 'Orders_row'
-    order_ID = db.Column(db.Integer, db.ForeignKey('order.order_ID'), primary_key=True)
+    order_ID = db.Column(db.Integer, db.ForeignKey('Order.order_ID'), primary_key=True)
     string_id = db.Column(db.Integer, primary_key=True)
-    artist_ID = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-    status_id = db.Column(db.Integer, db.ForeignKey('status.status_id'))
+    artist_ID = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('Status.status_id'))
     order_date = db.Column(db.Date)
     completion_date = db.Column(db.Date)
     description = db.Column(db.Text)
     amount = db.Column(db.Numeric)
+    product_id = db.Column(db.Integer,db.ForeignKey('Miniatures.miniature_ID'))
 
 # Модель Статусы
 class Status(db.Model):
@@ -86,6 +87,15 @@ class Photo(db.Model):
     photos_ID = db.Column(db.Integer, primary_key=True)
     string_photo_id = db.Column(db.Integer, primary_key=True)
     URL = db.Column(db.Text)
+
+def get_last_order_id():
+    last_id = db.session.query(Order.order_ID).order_by(Order.order_ID.desc()).first()
+    last_order_id = last_id if last_id else 0
+    return last_order_id
+
+def get_artist_id(miniature_id):
+    miniature = Miniature.query.filter_by(miniature_ID=miniature_id).first()
+    return miniature
 
 def generate_unique_filename():
     timestamp = str(int(time.time()))  # Get the current timestamp as a string
@@ -168,9 +178,15 @@ def logout():
 def cart():
     if request.method == 'POST':
         product_id = request.form['product_id']
-        order = Order(user_id=current_user.id, product_id=product_id)
+        order_id = get_last_order_id() + 1
+        order = Order(order_ID = order_id, customer_ID=current_user.user_id)
         db.session.add(order)
         db.session.commit()
+        artist_id = int(get_artist_id(product_id))
+        orderLine = OrderLine(order_ID = order_id, product_id = product_id, status_id = 1, artist_id = artist_id)
+        db.session.add(orderLine)
+        db.session.commit()
+        
         return redirect(url_for('cart'))
     orders = Order.query.filter_by(user_id=current_user.id).all()
     products = [Miniature.query.get(order.product_id) for order in orders]
