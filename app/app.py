@@ -180,8 +180,8 @@ def cart():
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
-        kategory_id = request.form.get('kategory.id')
-        material_id = request.form.get('material.id')
+        kategory_id = int(request.form.get('kategory'))
+        material_id = int(request.form.get('material'))
         photos = request.files.getlist('photos[]')
         photos_id = get_last_photos_id() + 1
         user = current_user.user_id

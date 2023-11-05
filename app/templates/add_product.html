@@ -21,14 +21,14 @@
     <label for="kategory">Категория</label>
     <select name="kategory" id="kategory">
       {% for kategory in kategory %}
-      <option value="{{ kategory.id }}">{{ kategory.kategory }}</option>
+      <option value="{{ kategory.kategory_id }}">{{ kategory.kategory }}</option>
       {% endfor %}  
     </select>
     
     <label for="material">Материал</label>
     <select name="material" id="material">
       {% for material in materials %}
-      <option value="{{ material.id }}">{{ material.material }}</option>
+      <option value="{{ material.material_id }}">{{ material.material }}</option>
       {% endfor %}  
     </select>
     
