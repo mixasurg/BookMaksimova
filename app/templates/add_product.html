@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Добавить товар</title>
-  <script>
-    function addPhotoInput() {
-      var container = document.getElementById("photo-container");
-      var input = document.createElement("input");
-      input.type = "file";
-      input.name = "photos[]";
-      container.appendChild(input);
-    }
-  </script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
-  <h1>Добавить товар</h1>
-  <form action="/add_product" method="post" enctype="multipart/form-data">
-    <label for="name">Название</label>
-    <input type="text" name="name" id="name">
-    
-    <label for="kategory">Категория</label>
-    <select name="kategory" id="kategory">
-      {% for kategory in kategory %}
-      <option value="{{ kategory.kategory_id }}">{{ kategory.kategory }}</option>
-      {% endfor %}  
-    </select>
-    
-    <label for="material">Материал</label>
-    <select name="material" id="material">
-      {% for material in materials %}
-      <option value="{{ material.material_id }}">{{ material.material }}</option>
-      {% endfor %}  
-    </select>
-    
-    <label for="photos">Выберите фотографии:</label><br>
-    <div id="photo-container">
-      <input type="file" name="photos[]" required><br><br>
-    </div>
-    <button type="button" onclick="addPhotoInput()">Добавить фотографию</button><br><br>
-    
-    <input type="submit" value="Добавить миниатюру">
-  </form>
+  <div class="container">
+    <h1>Добавить товар</h1>
+    <form action="/add_product" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="name">Название</label>
+        <input type="text" name="name" id="name">
+      </div>
+      <div class="form-group">
+        <label for="name">Цена закупки</label>
+        <input type="text" name="pursh" id="name">
+      </div>
+      <div class="form-group">
+        <label for="name">Цена продажи</label>
+        <input type="text" name="sale" id="name">
+      </div>
+      <div class="form-group">
+        <label for="kategory">Категория</label>
+        <select name="kategory" id="kategory">
+          {% for kategory in kategory %}
+          <option value="{{ kategory.product_category_code }}">{{ kategory.product_category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="photos">Выберите обложку:</label><br>
+        <div id="photo-container">
+          <input type="file" name="cover[]" required><br><br>
+        </div>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Добавить товар</button>
+    </form>
 </body>
+
 </html>
