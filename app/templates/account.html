@@ -1,0 +1,16 @@
+<h2>Личный кабинет</h2>
+<p>{{ customer.full_name }} ({{ customer.email }})</p>
+
+<h3>Мои заказы</h3>
+<ul>
+{% for o in orders %}
+  <li>
+    <a href="{{ url_for('order_detail', order_id=o.order_id) }}">
+      Заказ №{{ o.order_id }}
+    </a>
+    от {{ o.created_at }} —
+    {{ o.status.status_name }} —
+    {{ o.total_amount }} ₽
+  </li>
+{% endfor %}
+</ul>
