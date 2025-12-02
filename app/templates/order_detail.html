@@ -1,0 +1,26 @@
+<h2>Заказ №{{ order.order_id }}</h2>
+<p>Дата: {{ order.created_at }}</p>
+<p>Статус: {{ order.status.status_name }}</p>
+<p>Сумма: {{ order.total_amount }} ₽</p>
+
+<h3>Товары</h3>
+<ul>
+{% for item in order.items %}
+  <li>
+    {{ item.product.product_name }} —
+    {{ item.quantity }} шт × {{ item.price_per_unit }} = {{ item.total }}
+  </li>
+{% endfor %}
+</ul>
+
+<h3>Оплаты</h3>
+<ul>
+{% for p in order.payments %}
+  <li>
+    {{ p.payment_date }} —
+    {{ p.method.method_name }} —
+    {{ p.status.status_name }} —
+    {{ p.amount }} ₽
+  </li>
+{% endfor %}
+</ul>

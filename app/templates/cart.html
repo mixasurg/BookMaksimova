@@ -1,88 +1,120 @@
 <!DOCTYPE html>
 <html>
-<script>
-    function decreaseQuantity() {
-        var input = document.querySelector('input[name="productCount"]');
-        var count = parseInt(input.value);
-        if (count > 0) {
-            input.value = count - 1;
-        }
-    }
-
-    function increaseQuantity() {
-        var input = document.querySelector('input[name="productCount"]');
-        var count = parseInt(input.value);
-        input.value = count + 1;
-    }
-</script>
-<style>
-    .counter {
-        display: inline-block;
-        padding: 5px 10px;
-        background-color: #f8f9fa;
-        border-radius: 5px;
-    }
-
-    .change {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        text-align: center;
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .change span {
-        display: block;
-        line-height: 30px;
-    }
-
-    input[name="productCount"] {
-        width: 50px;
-        text-align: center;
-    }
-</style>
-
 <head>
+    <meta charset="UTF-8">
     <title>Корзина</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">Интернет-магазин</a>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/cart">Корзина</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Выйти</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h1>Корзина</h1>
-        <h2>Ваши товары:</h2>
-        <ul>
-            {% for product in products %}
-            <li>
-                {{ product.product_name }} ({{ product.category_name }}) - Цена: {{ product.price_sale }} руб. за 1 шт -
-                Количество:
-                <span class="change minus" onclick="decreaseQuantity()"><span>-</span></span>
-                <input type="text" name="productCount" value="{{ product.quantity }}" disabled>
-                <span class="change plus" onclick="increaseQuantity()"><span>+</span></span>
-                <form method="post" action="/add_cart">
-                    <input type="hidden" name="product_id" value="{{ product.product_ID }}">
-                    <img src="{{ product.cover }}" alt="Product Photo" width="15%">
-                </form>
-            </li>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Интернет-магазин «ХвостикМаркет»</a>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="/cart">Корзина</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account">Личный кабинет</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/logout">Выйти</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container mt-4">
+    <h1>Корзина</h1>
+
+    {% if cart_items %}
+        <h2 class="h4 mt-3 mb-3">Ваши товары</h2>
+        <ul class="list-group mb-3">
+            {% for item in cart_items %}
+                <li class="list-group-item d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        {% if item.product.cover %}
+                            <img src="{{ item.product.cover }}" alt="Фото товара"
+                                 style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
+                        {% endif %}
+                        <div>
+                            <div class="font-weight-bold">
+                                {{ item.product.product_name }}
+                            </div>
+                            <div class="text-muted">
+                                {{ item.product.price_sale }} ₽ × {{ item.quantity }} шт
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <div class="font-weight-bold mb-2">
+                            {{ item.line_total }} ₽
+                        </div>
+                        <form method="post" action="{{ url_for('remove_from_cart') }}">
+                            <input type="hidden" name="product_id" value="{{ item.product.product_id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Удалить из корзины
+                            </button>
+                        </form>
+                    </div>
+                </li>
             {% endfor %}
         </ul>
-        <form method="post" action="/check">
-            <button type="submit" class="btn btn-primary">Оформить</button>
-        </form>
-    </div>
-</body>
 
+        <div class="mb-3">
+            <h4>Итого: {{ total }} ₽</h4>
+        </div>
+
+        <h3 class="h5 mt-4">Оформление заказа</h3>
+        <form method="post" action="{{ url_for('check') }}">
+
+            <!-- Адрес доставки -->
+            <div class="form-group">
+                <label for="delivery_address">Адрес доставки:</label>
+                <input type="text"
+                       name="delivery_address"
+                       id="delivery_address"
+                       class="form-control"
+                       value="{{ current_user.delivery_address or '' }}"
+                       required>
+            </div>
+
+            <!-- Способ доставки -->
+            <div class="form-group">
+                <label for="delivery_method_id">Способ доставки:</label>
+                <select name="delivery_method_id"
+                        id="delivery_method_id"
+                        class="form-control"
+                        required>
+                    {% for dm in delivery_methods %}
+                        <option value="{{ dm.delivery_method_id }}">
+                            {{ dm.method_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Способ оплаты -->
+            <div class="form-group">
+                <label for="payment_method_id">Способ оплаты:</label>
+                <select name="payment_method_id" id="payment_method_id"
+                        class="form-control" required>
+                    {% for pm in payment_methods %}
+                        <option value="{{ pm.payment_method_id }}">
+                            {{ pm.method_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Оформить заказ
+            </button>
+        </form>
+    {% else %}
+        <p>Ваша корзина пуста.</p>
+        <a href="/" class="btn btn-secondary">Перейти к товарам</a>
+    {% endif %}
+</div>
+</body>
 </html>

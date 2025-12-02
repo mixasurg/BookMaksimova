@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Вход</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Вход для сотрудника</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Вход</h1>
-        <form method="post" action="/login_worker">
-            <div class="form-group">
-                <label for="username">Имя пользователя:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Пароль:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Войти</button>
-        </form>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Интернет-магазин «ХвостикМаркет»</a>
+</nav>
+
+<div class="container mt-4">
+    <h1>Вход для сотрудника</h1>
+    <form method="post" action="{{ url_for('login_worker') }}">
+        <div class="form-group">
+            <label for="username">Логин:</label>
+            <input type="text"
+                   class="form-control"
+                   id="username"
+                   name="username"
+                   required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password"
+                   class="form-control"
+                   id="password"
+                   name="password"
+                   required>
+        </div>
+        <button type="submit" class="btn btn-primary">Войти</button>
+    </form>
+</div>
 </body>
 </html>
